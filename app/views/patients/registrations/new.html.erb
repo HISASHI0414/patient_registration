@@ -1,28 +1,28 @@
-<h2>Patient Email Registration</h2>
+<h1>マイページ作成</h1>
 
-<div>
-  <p><strong>Clinic:</strong> <%= @clinic.clinic_name %></p>
-  <p><strong>Medical Record No:</strong> <%= @patient.medical_record_no %></p>
-  <p><strong>Last Name:</strong> <%= @patient.last_name %></p>
-  <p><strong>First Name:</strong> <%= @patient.first_name %></p>
-  <p><strong>Last Name Kana:</strong> <%= @patient.last_name_kana %></p>
-  <p><strong>First Name Kana:</strong> <%= @patient.first_name_kana %></p>
-  <p><strong>Birth Date:</strong> <%= @patient.birth_date %></p>
-  <p><strong>Gender:</strong> <%= @patient.gender %></p>
-</div>
-
-<%= form_for(resource, as: resource_name, url: patient_registration_path(resource_name), html: { method: :post }) do |f| %>
-  <%= f.hidden_field :clinic_id, value: params[:clinic_id] %>
-  <%= f.hidden_field :patient_id, value: params[:patient_id] %>
-
-  <div class="field">
-    <%= f.label :email %>
-    <%= f.email_field :email, autofocus: true %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit 'Register' %>
-  </div>
+<%= form_with model: @patient, url: patients_create_path do |f| %>
+  <%= f.hidden_field :id, value: @patient.id %>
+  <p>
+    <strong>歯科医院名:</strong> <%= Clinic.find(@patient.clinic_id).clinic_name %><br>
+    <strong>カルテNo.:</strong> <%= @patient.medical_record_no %><br>
+    <strong>氏名:</strong> <%= @patient.last_name %> <%= @patient.first_name %><br>
+    <strong>氏名（カナ）:</strong> <%= @patient.last_name_kana %> <%= @patient.first_name_kana %><br>
+    <strong>生年月日:</strong> <%= @patient.birth_date %><br>
+    <strong>性別:</strong> <%= @patient.gender %><br>
+  </p>
+  <p>
+    <%= f.label :email, "メールアドレス" %><br>
+    <%= f.email_field :email %>
+  </p>
+  <p>
+    <%= f.label :password, "パスワード" %><br>
+    <%= f.password_field :password %>
+  </p>
+  <p>
+    <%= f.label :password_confirmation, "パスワード確認" %><br>
+    <%= f.password_field :password_confirmation %>
+  </p>
+  <p>
+    <%= f.submit "マイページ作成" %>
+  </p>
 <% end %>
-
-<%= render "patients/shared/links" %>

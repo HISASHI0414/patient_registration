@@ -1,26 +1,52 @@
-class Patients::RegistrationsController < Devise::RegistrationsController
-  before_action :configure_sign_up_params, only: [:create]
-
+class Patients::RegistrationsController < ApplicationController
   def new
-    @clinic = Clinic.find(params[:clinic_id])
-    @patient = Patient.find(params[:patient_id])
-    super
-  end
-
-  def create
-    @clinic = Clinic.find(params[:clinic_id])
-    @patient = Patient.find(params[:patient_id])
-    generated_password = @patient.birth_date.strftime('%Y%m%d') # 生年月日をYYYYMMDD形式のパスワードに変換
-    if @patient.update(email: params[:patient][:email], password: generated_password, password_confirmation: generated_password, my_page: true)
-      redirect_to new_patient_session_path, notice: 'Patient registration completed. Please log in.'
+    if params[:data]
+      @patient_data = JSON.parse(params[:data])
+      @patient = Patient.new(@patient_data)
     else
-      render :new
+      @patient = Patient.new
     end
   end
 
-  protected
+  def create
+    @patient = Patient.find(params[:patient][:id])
+    if @patient.my_page
+      redirect_to already_registered_path, notice: '既に登録済みの患者です。'
+    else
+      if @patient.update(patient_params)
+        PatientMailer.registration_confirmation(@patient).deliver_now
+        redirect_to confirmation_sent_path, notice: '本登録用のメールが発信されましたので、そちらに記載のURLをクリックして本登録を完了して下さい。'
+      else
+        render :new
+      end
+    end
+  end
 
-  def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:clinic_id, :patient_id])
+  def confirmation_sent
+  end
+
+  def already_registered
+  end
+
+
+  def confirm
+    patient = Patient.find_by(confirmation_token: params[:token])
+    if patient && token_still_valid?(patient.confirmation_token_sent_at)
+      patient.update(my_page: true, confirmed_at: Time.current, confirmation_token: nil, confirmation_token_sent_at: nil)
+      redirect_to authenticated_patient_root_path, notice: '本登録が完了しました。ログインしてください。'
+    else
+      redirect_to root_path, alert: '無効なまたは期限切れのトークンです。'
+    end
+  end
+
+
+  private
+
+  def patient_params
+    params.require(:patient).permit(:email, :password, :password_confirmation)
+  end
+
+  def token_still_valid?(confirmation_token_sent_at)
+    confirmation_token_sent_at > 30.minutes.ago
   end
 end

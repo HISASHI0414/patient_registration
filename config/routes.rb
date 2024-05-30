@@ -18,14 +18,30 @@ Rails.application.routes.draw do
     registrations: 'patients/registrations'
   }
 
+  get 'confirmation_sent', to: 'patients/registrations#confirmation_sent', as: :confirmation_sent
+
+  get 'patients/confirm', to: 'patients/registrations#confirm'
+
+  get 'already_registered', to: 'patients/registrations#already_registered'
+
+
   # clinics名前空間の中でのpatientsリソースの定義
   namespace :clinics do
     resources :patients do
+      member do
+        get 'qr_code'
+      end
       collection do
         get 'search'
       end
     end
   end
+
+  namespace :patients do
+    get 'new', to: 'registrations#new'
+    post 'create', to: 'registrations#create'
+  end
+
 
   # 管理者ログイン後のルート
   authenticated :admin do

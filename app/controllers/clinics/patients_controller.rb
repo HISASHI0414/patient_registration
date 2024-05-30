@@ -41,6 +41,12 @@ module Clinics
       @qr = RQRCode::QRCode.new(qr_code_content)  # QRコードを生成
     end
 
+    def qr_code
+      respond_to do |format|
+        format.svg { render inline: @patient.qr_code }
+      end
+    end
+
     private
 
     def set_clinic
