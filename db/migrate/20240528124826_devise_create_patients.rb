@@ -13,9 +13,12 @@ class DeviseCreatePatients < ActiveRecord::Migration[7.1]
       t.string :first_name_kana,    null: false
       t.date :birth_date,           null: false
       t.string :gender,             null: false
-      t.boolean :my_page,                        default: false
-      t.string :email,              null: false, default: ""
-      t.string :encrypted_password, null: false, default: ""
+      t.boolean :my_page,                         default: false
+      t.string :email,                            default: ""
+      t.string :encrypted_password,                default: ""
+      t.string :confirmation_token
+      t.string :confirmation_token_sent_at
+      t.datetime :confirmed_at
 
       ## Recoverable
       t.string   :reset_password_token
@@ -47,6 +50,7 @@ class DeviseCreatePatients < ActiveRecord::Migration[7.1]
 
     add_index :patients, [:medical_record_no, :clinic_id], unique: true
     add_index :patients, :reset_password_token, unique: true
+    add_index :patients, :confirmation_token, unique: true
 
     # 既存のemailカラムに対するユニークインデックスが存在する場合、それを削除します。
     # これにより、新しい部分インデックスを追加する前に競合を回避できます。
@@ -57,7 +61,6 @@ class DeviseCreatePatients < ActiveRecord::Migration[7.1]
     # 空のemail値を許容しつつ、非空のemail値に対してユニーク制約を維持します。
     add_index :patients, :email,                unique: true, where: "email <> ''"
 
-    # add_index :patients, :confirmation_token,   unique: true
     # add_index :patients, :unlock_token,         unique: true
   end
 end

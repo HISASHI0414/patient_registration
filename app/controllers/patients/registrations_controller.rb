@@ -13,6 +13,9 @@ class Patients::RegistrationsController < ApplicationController
     if @patient.my_page
       redirect_to already_registered_path, notice: '既に登録済みの患者です。'
     else
+      @patient.confirmation_token = SecureRandom.hex(10)
+      @patient.confirmation_token_sent_at = Time.current
+
       if @patient.update(patient_params)
         PatientMailer.registration_confirmation(@patient).deliver_now
         redirect_to confirmation_sent_path, notice: '本登録用のメールが発信されましたので、そちらに記載のURLをクリックして本登録を完了して下さい。'
@@ -28,22 +31,33 @@ class Patients::RegistrationsController < ApplicationController
   def already_registered
   end
 
-
   def confirm
     patient = Patient.find_by(confirmation_token: params[:token])
-    if patient && token_still_valid?(patient.confirmation_token_sent_at)
-      patient.update(my_page: true, confirmed_at: Time.current, confirmation_token: nil, confirmation_token_sent_at: nil)
-      redirect_to authenticated_patient_root_path, notice: '本登録が完了しました。ログインしてください。'
+
+    if patient
+      Rails.logger.info "Patient found: #{patient.id}"
     else
-      redirect_to root_path, alert: '無効なまたは期限切れのトークンです。'
+      Rails.logger.info "Patient not found with token: #{params[:token]}"
+    end
+
+    if patient && token_still_valid?(patient.confirmation_token_sent_at)
+      if patient.update(my_page: true, confirmed_at: Time.current, confirmation_token: nil, confirmation_token_sent_at: nil)
+        Rails.logger.info "Patient confirmed: #{patient.id}"
+        redirect_to authenticated_patient_root_path, notice: '本登録が完了しました。ログインしてください。'
+      else
+        Rails.logger.info "Patient update failed for patient: #{patient.id}. Errors: #{patient.errors.full_messages.join(', ')}"
+        redirect_to unauthenticated_patient_root_path, alert: '登録の更新に失敗しました。'
+      end
+    else
+      Rails.logger.info "Invalid or expired token for patient: #{patient&.id}"
+      redirect_to unauthenticated_patient_root_path, alert: '無効なまたは期限切れのトークンです。'
     end
   end
-
 
   private
 
   def patient_params
-    params.require(:patient).permit(:email, :password, :password_confirmation)
+    params.require(:patient).permit(:id, :email, :password, :password_confirmation)
   end
 
   def token_still_valid?(confirmation_token_sent_at)

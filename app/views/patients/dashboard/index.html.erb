@@ -1,0 +1,10 @@
+<h1>マイページ</h1>
+<p>ようこそ、<%= current_patient.first_name %>さん。</p>
+<p>以下の情報をご確認ください。</p>
+
+<ul>
+  <li>氏名: <%= current_patient.last_name %> <%= current_patient.first_name %></li>
+  <li>ふりがな: <%= current_patient.last_name_kana %> <%= current_patient.first_name_kana %></li>
+  <li>生年月日: <%= current_patient.birth_date %></li>
+  <li>性別: <%= current_patient.gender %></li>
+</ul>

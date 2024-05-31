@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
   get 'confirmation_sent', to: 'patients/registrations#confirmation_sent', as: :confirmation_sent
 
-  get 'patients/confirm', to: 'patients/registrations#confirm'
+  get 'patients/confirm', to: 'patients/registrations#confirm', as: 'confirm_patient_registration'
 
   get 'already_registered', to: 'patients/registrations#already_registered'
 
@@ -41,7 +41,6 @@ Rails.application.routes.draw do
     get 'new', to: 'registrations#new'
     post 'create', to: 'registrations#create'
   end
-
 
   # 管理者ログイン後のルート
   authenticated :admin do

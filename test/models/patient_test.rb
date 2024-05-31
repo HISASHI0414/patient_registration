@@ -5,10 +5,10 @@
 #  id                         :bigint           not null, primary key
 #  birth_date                 :date             not null
 #  confirmation_token         :string
-#  confirmation_token_sent_at :datetime
+#  confirmation_token_sent_at :string
 #  confirmed_at               :datetime
-#  email                      :string           default(""), not null
-#  encrypted_password         :string           default(""), not null
+#  email                      :string           default("")
+#  encrypted_password         :string           default("")
 #  first_name                 :string           not null
 #  first_name_kana            :string           not null
 #  gender                     :string           not null
