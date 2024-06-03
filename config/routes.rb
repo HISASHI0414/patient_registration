@@ -18,11 +18,15 @@ Rails.application.routes.draw do
     registrations: 'patients/registrations'
   }
 
+
   get 'confirmation_sent', to: 'patients/registrations#confirmation_sent', as: :confirmation_sent
 
   get 'patients/confirm', to: 'patients/registrations#confirm', as: 'confirm_patient_registration'
 
   get 'already_registered', to: 'patients/registrations#already_registered'
+
+  get 'registration_success', to: 'patients/registrations#registration_success', as: :registration_success
+
 
 
   # clinics名前空間の中でのpatientsリソースの定義

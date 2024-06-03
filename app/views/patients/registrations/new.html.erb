@@ -22,6 +22,31 @@
     <%= f.label :password_confirmation, "パスワード確認" %><br>
     <%= f.password_field :password_confirmation %>
   </p>
+  <!-- app/views/devise/registrations/new.html.erb -->
+  <div id="termsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span id="closeTermsModal" class="close">&times;</span>
+      <div id="termsContent" style="max-height: 300px; overflow-y: scroll;">
+        <h2>利用規約</h2>
+        <p>ここに利用規約の内容が入ります...</p>
+        <p>ここに利用規約の内容が入ります...</p>
+        <p>ここに利用規約の内容が入ります...</p>
+        <!-- 必要に応じて利用規約の内容を追加 -->
+      </div>
+      <button id="acceptTermsButton" disabled>同意する</button>
+    </div>
+  </div>
+
+  <!-- サインアップフォーム内 -->
+  <!-- 他のサインアップフィールド -->
+  <div>
+    <button type="button" id="openTermsButton">利用規約を読む</button>
+    <input type="hidden" id="termsAccepted" name="terms_accepted" value="false">
+  </div>
+  <div>
+    <%= f.submit "サインアップ", id: "signupButton", disabled: true %>
+  </div>
+
   <p>
     <%= f.submit "マイページ作成" %>
   </p>
