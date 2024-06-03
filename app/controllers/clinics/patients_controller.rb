@@ -15,7 +15,7 @@ module Clinics
     def create
       @clinic = current_clinic  # 現在のクリニックをセット
       @patient = @clinic.patients.build(patient_params)  # フォームからの入力値で患者オブジェクトを生成
-      @patient.email = "test3@example.com" # デフォルト値を設定
+      @patient.email = "test7@example.com" # デフォルト値を設定
       @patient.password = "test1234"  # 仮登録の段階ではパスワードを空に設定
       @patient.password_confirmation = @patient.password
 
